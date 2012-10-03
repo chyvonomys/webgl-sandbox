@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL test</title>
+<script type="text/javascript" src="webgl.js"></script>
+</head>
+
+<body onload="init(); draw();">
+<table>
+<tr>
+<td>
+    <table>
+    <tr><td align="right">*<td align="center"><input id="b_top" type="text" size="4" value="1.5"/><td>*</tr>
+    <tr>
+    <td><input id="b_left" type="text" size="4" value="-1"/>
+    <td><canvas id="cnvs" style="border: none;" width="400" height="300" />
+    <td><input id="b_right" type="text" size="4" value="3"/>
+    </tr>
+    <tr><td align="right">*<td align="center"><input id="b_bottom" type="text" size="4" value="-1.5"/><td>*</tr>
+    </table>
+</td>
+<td>
+    <input type="button" value="Set Ortho" onclick="setupOrtho(); draw();" />
+    <input type="button" value="Toggle Animation" onclick="toggleAnimation();" />
+    <input id="incr" type="text" value="0.01" />
+</td>
+</tr>
+<tr>
+<td><h3>Vertex Shader:</h3>
+<textarea id="vsh" rows="12" cols="60">
+uniform mat4 u_projMatrix;
+uniform mat4 u_mvMatrix;
+uniform float u_time;
+attribute vec4 a_position;
+attribute vec4 a_texCoord;
+varying vec4 v_texCoord;
+void main()
+{
+    v_texCoord = vec4(a_texCoord.x, (a_texCoord.y+u_time)*a_texCoord.z, a_texCoord.z, a_texCoord.w);
+    gl_Position = u_projMatrix * u_mvMatrix * a_position;
+}
+</textarea>
+</td>
+<td><h3>Fragment Shader:</h3>
+<textarea id="fsh" rows="12" cols="60">
+uniform sampler2D u_texture;
+varying highp vec4 v_texCoord;
+void main()
+{
+    highp vec2 tc = vec2(v_texCoord.x, v_texCoord.y/v_texCoord.z);
+    gl_FragColor = texture2D(u_texture, tc);
+}
+</textarea>
+</td></tr>
+<tr><td>
+<input type="button" value="Compile" onClick="compileShaders(); draw();"/>
+<h3>Log:</h3>
+<textarea id="log" rows="10" cols="60">
+</textarea>
+</td></tr></table>
+<table>
+<tr>
+<td><input type="button" value="Use Arrow" onClick="changeTexture('arrow');draw();"/></td>
+<td><input type="button" value="Use Checkers" onClick="changeTexture('checker');draw();"/></td>
+</tr>
+<tr>
+<td><img id="arrow" src="arrow_down_blue.png"/></td>
+<td><img id="checker" src="checker.png"/></td>
+</tr></table>
+</body>
+</html>
